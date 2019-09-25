@@ -11,6 +11,14 @@
         <label :for="todo.id">{{ todo.name }}</label>
       </li>
     </ul>
+
+    <button
+      v-if="todos.length"
+      @click="removeDoneTodos()"
+      :disabled="doneTodos.length === 0"
+    >
+      Remove done todos
+    </button>
   </main>
 </template>
 
@@ -19,7 +27,7 @@ import Vue from 'vue';
 import Todo from '@/models/todo';
 
 export default Vue.extend({
-  data(): { newTodoName: ''; todos: Todo[] } {
+  data(): { newTodoName: string; todos: Todo[] } {
     return {
       newTodoName: '',
       todos: [
@@ -35,6 +43,11 @@ export default Vue.extend({
         },
       ],
     };
+  },
+  computed: {
+    doneTodos(): Todo[] {
+      return this.todos.filter((todo) => todo.done);
+    },
   },
   methods: {
     addTodo(event: Event): void {
@@ -57,6 +70,9 @@ export default Vue.extend({
           .substring(2, 12),
         10,
       );
+    },
+    removeDoneTodos(): void {
+      this.todos = this.todos.filter((todo) => !todo.done);
     },
   },
 });
