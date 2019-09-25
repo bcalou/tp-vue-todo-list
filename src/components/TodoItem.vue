@@ -13,6 +13,11 @@ export default Vue.extend({
   props: {
     todo: Object as () => Todo,
   },
+  watch: {
+    'todo.done'() {
+      this.$emit('check');
+    },
+  },
 });
 </script>
 

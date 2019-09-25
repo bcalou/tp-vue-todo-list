@@ -3,7 +3,12 @@
     <todo-new v-on:newTodo="addTodo($event)"></todo-new>
 
     <ul>
-      <todo-item v-for="todo in todos" :key="todo.id" :todo="todo"></todo-item>
+      <todo-item
+        v-for="todo in todos"
+        :key="todo.id"
+        :todo="todo"
+        v-on:check="saveTodos()"
+      ></todo-item>
     </ul>
 
     <button
@@ -29,18 +34,7 @@ export default Vue.extend({
   },
   data(): { todos: Todo[] } {
     return {
-      todos: [
-        {
-          id: 1,
-          name: 'Manger',
-          done: true,
-        },
-        {
-          id: 2,
-          name: 'Boire',
-          done: false,
-        },
-      ],
+      todos: [],
     };
   },
   computed: {
@@ -48,12 +42,24 @@ export default Vue.extend({
       return this.todos.filter((todo) => todo.done);
     },
   },
+  created() {
+    const savedTodos: string | null = localStorage.getItem('todos');
+
+    if (savedTodos) {
+      this.todos = JSON.parse(savedTodos);
+    }
+  },
   methods: {
     addTodo(todo: Todo): void {
       this.todos.push(todo);
+      this.saveTodos();
     },
     removeDoneTodos(): void {
       this.todos = this.todos.filter((todo) => !todo.done);
+      this.saveTodos();
+    },
+    saveTodos(): void {
+      localStorage.setItem('todos', JSON.stringify(this.todos));
     },
   },
 });
