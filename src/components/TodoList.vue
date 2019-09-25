@@ -1,5 +1,10 @@
 <template>
   <main>
+    <form @submit="addTodo($event)">
+      <input placeholder="Do something..." v-model="newTodoName" />
+      <button>Add</button>
+    </form>
+
     <ul>
       <li v-for="todo in todos" :key="todo.id">
         <input type="checkbox" v-model="todo.done" :id="todo.id" />
@@ -15,6 +20,7 @@ import Vue from 'vue';
 export default Vue.extend({
   data() {
     return {
+      newTodoName: '',
       todos: [
         {
           id: 1,
@@ -28,6 +34,29 @@ export default Vue.extend({
         },
       ],
     };
+  },
+  methods: {
+    addTodo(event: Event): void {
+      event.preventDefault();
+
+      if (this.newTodoName.length) {
+        this.todos.push({
+          id: this.getRandomId(),
+          name: this.newTodoName,
+          done: false,
+        });
+
+        this.newTodoName = '';
+      }
+    },
+    getRandomId(): number {
+      return parseInt(
+        Math.random()
+          .toString()
+          .substring(2, 12),
+        10,
+      );
+    },
   },
 });
 </script>
