@@ -16,9 +16,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Todo from '@/models/todo';
 
 export default Vue.extend({
-  data() {
+  data(): { newTodoName: ''; todos: Todo[] } {
     return {
       newTodoName: '',
       todos: [
