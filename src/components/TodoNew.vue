@@ -27,6 +27,7 @@ export default Vue.extend({
           id: this.getRandomId(),
           name: this.newTodoName,
           done: false,
+          editing: false,
         });
 
         this.newTodoName = '';

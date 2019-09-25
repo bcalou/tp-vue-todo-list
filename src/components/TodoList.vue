@@ -7,7 +7,7 @@
         v-for="todo in todos"
         :key="todo.id"
         :todo="todo"
-        v-on:check="saveTodos()"
+        v-on:update="saveTodos()"
       ></todo-item>
     </ul>
 
@@ -60,7 +60,10 @@ export default Vue.extend({
       this.saveTodos();
     },
     saveTodos(): void {
-      localStorage.setItem('todos', JSON.stringify(this.todos));
+      localStorage.setItem(
+        'todos',
+        JSON.stringify(this.todos.map((todo) => ({ ...todo, editing: false }))),
+      );
     },
   },
 });
