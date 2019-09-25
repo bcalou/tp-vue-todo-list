@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="home">
     <header>
-      <h1>Todo list</h1>
+      <h1 class="home__title">Todo list</h1>
     </header>
 
     <todo-list></todo-list>
@@ -19,3 +19,17 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style lang="scss">
+.home {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.home__title {
+  font-size: 2rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+</style>

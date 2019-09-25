@@ -1,8 +1,8 @@
 <template>
-  <main>
+  <main class="todoList">
     <todo-new v-on:newTodo="addTodo($event)"></todo-new>
 
-    <ul>
+    <ul class="todoList__items">
       <todo-item
         v-for="todo in todos"
         :key="todo.id"
@@ -15,6 +15,7 @@
       v-if="todos.length"
       @click="removeDoneTodos()"
       :disabled="doneTodos.length === 0"
+      class="todoList__removeDone"
     >
       Remove done todos
     </button>
@@ -66,4 +67,23 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+.todoList {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.todoList__items {
+  margin-top: 1rem;
+  padding-bottom: 3rem;
+}
+
+.todoList__removeDone {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 3rem;
+  left: 0;
+  box-shadow: 0 -10px 10px white;
+}
 </style>

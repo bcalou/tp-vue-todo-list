@@ -1,7 +1,11 @@
 <template>
-  <form @submit="addTodo($event)">
-    <input placeholder="Do something..." v-model="newTodoName" />
-    <button>Add</button>
+  <form @submit="addTodo($event)" class="todoNew">
+    <input
+      placeholder="Do something..."
+      v-model="newTodoName"
+      class="todoNew__input"
+    />
+    <button class="todoNew__addButton">Add</button>
   </form>
 </template>
 
@@ -41,4 +45,16 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+.todoNew {
+  display: flex;
+}
+
+.todoNew__input {
+  flex: 1;
+  height: 40px;
+}
+
+.todoNew__addButton {
+  padding: 0 1rem;
+}
 </style>
