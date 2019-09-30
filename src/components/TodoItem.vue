@@ -2,7 +2,11 @@
   <li class="todoItem">
     <input type="checkbox" v-model="todo.done" class="todoItem__checkbox" />
 
-    <form @submit="setName($event)" v-if="todo.editing" class="todoItem__edit">
+    <form
+      @submit.prevent="setName()"
+      v-if="todo.editing"
+      class="todoItem__edit"
+    >
       <input v-model="newTodoName" ref="newNameInput" />
       <button>Edit</button>
     </form>
@@ -27,26 +31,31 @@ export default Vue.extend({
     };
   },
   watch: {
-    'todo.done'() {
-      this.$emit('update');
+    'todo.done'(newValue) {
+      this.$store.dispatch('todos/setDone', {
+        todo: this.todo,
+        done: newValue,
+      });
     },
   },
   methods: {
     enterEditMode(): void {
       if (!this.todo.done) {
-        this.todo.editing = true;
+        this.$store.dispatch('todos/enterEditMode', { todo: this.todo });
+
         Vue.nextTick().then(() =>
           (this.$refs.newNameInput as HTMLInputElement).focus(),
         );
       }
     },
-    setName(event: Event): void {
-      event.preventDefault();
-      this.todo.editing = false;
+    setName(): void {
+      this.$store.dispatch('todos/quitEditMode');
 
       if (this.newTodoName.length) {
-        this.todo.name = this.newTodoName;
-        this.$emit('update');
+        this.$store.dispatch('todos/setName', {
+          todo: this.todo,
+          name: this.newTodoName,
+        });
       }
     },
   },

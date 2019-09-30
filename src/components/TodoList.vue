@@ -1,20 +1,15 @@
 <template>
   <main class="todoList">
-    <todo-new v-on:newTodo="addTodo($event)"></todo-new>
+    <todo-new></todo-new>
 
     <ul class="todoList__items">
-      <todo-item
-        v-for="todo in todos"
-        :key="todo.id"
-        :todo="todo"
-        v-on:update="saveTodos()"
-      ></todo-item>
+      <todo-item v-for="todo in todos" :key="todo.id" :todo="todo"></todo-item>
     </ul>
 
     <button
       v-if="todos.length"
       @click="removeDoneTodos()"
-      :disabled="doneTodos.length === 0"
+      :disabled="done.length === 0"
       class="todoList__removeDone"
     >
       Remove done todos
@@ -27,43 +22,20 @@ import Vue from 'vue';
 import Todo from '@/models/todo';
 import TodoNew from '@/components/TodoNew.vue';
 import TodoItem from '@/components/TodoItem.vue';
+import { mapState, mapGetters } from 'vuex';
 
 export default Vue.extend({
   components: {
     TodoNew,
     TodoItem,
   },
-  data(): { todos: Todo[] } {
-    return {
-      todos: [],
-    };
-  },
   computed: {
-    doneTodos(): Todo[] {
-      return this.todos.filter((todo) => todo.done);
-    },
-  },
-  created() {
-    const savedTodos: string | null = localStorage.getItem('todos');
-
-    if (savedTodos) {
-      this.todos = JSON.parse(savedTodos);
-    }
+    ...mapState('todos', ['todos']),
+    ...mapGetters('todos', ['done']),
   },
   methods: {
-    addTodo(todo: Todo): void {
-      this.todos.push(todo);
-      this.saveTodos();
-    },
     removeDoneTodos(): void {
-      this.todos = this.todos.filter((todo) => !todo.done);
-      this.saveTodos();
-    },
-    saveTodos(): void {
-      localStorage.setItem(
-        'todos',
-        JSON.stringify(this.todos.map((todo) => ({ ...todo, editing: false }))),
-      );
+      this.$store.dispatch('todos/removeDone');
     },
   },
 });

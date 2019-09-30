@@ -1,5 +1,5 @@
 <template>
-  <form @submit="addTodo($event)" class="todoNew">
+  <form @submit.prevent="addTodo()" class="todoNew">
     <input
       placeholder="Do something..."
       v-model="newTodoName"
@@ -19,27 +19,12 @@ export default Vue.extend({
     };
   },
   methods: {
-    addTodo(event: Event): void {
-      event.preventDefault();
-
+    addTodo(): void {
       if (this.newTodoName.length) {
-        this.$emit('newTodo', {
-          id: this.getRandomId(),
-          name: this.newTodoName,
-          done: false,
-          editing: false,
-        });
+        this.$store.dispatch('todos/add', { name: this.newTodoName });
 
         this.newTodoName = '';
       }
-    },
-    getRandomId(): number {
-      return parseInt(
-        Math.random()
-          .toString()
-          .substring(2, 12),
-        10,
-      );
     },
   },
 });
