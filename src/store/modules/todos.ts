@@ -51,33 +51,21 @@ const todos: Module<{ todos: Todo[] }, any> = {
   actions: {
     add(context, payload: { name: string }) {
       context.commit('add', payload);
-      context.dispatch('save');
     },
     removeDone(context) {
       context.commit('removeDone');
-      context.dispatch('save');
     },
     setDone(context, payload: { todo: Todo; done: boolean }) {
       context.commit('setDone', payload);
-      context.dispatch('save');
     },
     setName(context, payload: { todo: Todo; name: string }) {
       context.commit('setName', payload);
-      context.dispatch('save');
     },
     enterEditMode(context, payload: { todo: Todo }) {
       context.commit('enterEditMode', payload);
     },
     quitEditMode(context) {
       context.commit('quitEditMode');
-    },
-    save(context) {
-      localStorage.setItem(
-        'todos',
-        JSON.stringify(
-          context.state.todos.map((todo) => ({ ...todo, editing: false })),
-        ),
-      );
     },
   },
 };
