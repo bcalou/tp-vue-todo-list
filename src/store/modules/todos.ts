@@ -41,7 +41,7 @@ const todos: Module<{ todos: Todo[] }, any> = {
     enterEditMode(state, payload: { todo: Todo }) {
       state.todos = state.todos.map((todo) => ({
         ...todo,
-        editing: todo === payload.todo,
+        editing: todo.id === payload.todo.id,
       }));
     },
     quitEditMode(state) {
