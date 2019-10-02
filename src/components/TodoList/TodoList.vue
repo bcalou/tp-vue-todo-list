@@ -20,8 +20,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import Todo from '@/models/todo';
-import TodoNew from '@/components/TodoNew.vue';
-import TodoItem from '@/components/TodoItem.vue';
+import TodoNew from '@/components/TodoNew/TodoNew.vue';
+import TodoItem from '@/components/TodoItem/TodoItem.vue';
 import { mapState, mapGetters } from 'vuex';
 
 export default Vue.extend({
