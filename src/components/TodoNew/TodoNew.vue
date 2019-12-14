@@ -14,31 +14,33 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { watch, ref } from '@vue/composition-api';
 
 export default Vue.extend({
-  data(): { newTodoName: string; inputError: boolean } {
-    return {
-      newTodoName: '',
-      inputError: false,
-    };
-  },
-  methods: {
-    addTodo(): void {
-      if (this.newTodoName.length) {
-        this.$store.dispatch('todos/add', { name: this.newTodoName });
+  setup(props, { root: { $store } }) {
+    const newTodoName = ref('');
+    const inputError = ref(false);
 
-        this.newTodoName = '';
+    function addTodo(): void {
+      if (newTodoName.value.length) {
+        $store.dispatch('todos/add', { name: newTodoName.value });
+
+        newTodoName.value = '';
       } else {
-        this.inputError = true;
+        inputError.value = true;
       }
-    },
-  },
-  watch: {
-    newTodoName(newTodoName) {
-      if (newTodoName.length) {
-        this.inputError = false;
-      }
-    },
+    }
+
+    watch(
+      () => newTodoName,
+      () => {
+        if (newTodoName.value.length) {
+          inputError.value = false;
+        }
+      },
+    );
+
+    return { newTodoName, inputError, addTodo };
   },
 });
 </script>
