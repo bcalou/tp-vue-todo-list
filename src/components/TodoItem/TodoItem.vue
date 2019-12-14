@@ -3,8 +3,8 @@
     <input type="checkbox" v-model="todo.done" class="todoItem__checkbox" />
 
     <div v-if="todo.editing">
-      <form @submit.prevent="setName()" class="todoItem__edit">
-        <input v-model="newTodoName" ref="newNameInput" />
+      <form @submit.prevent="submit()" class="todoItem__edit">
+        <input v-model="input" ref="newNameInput" />
         <button>Edit</button>
       </form>
       <p v-if="inputError" class="error">The todo name cannot be empty</p>
@@ -19,7 +19,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import Todo from '@/models/todo';
-import { watch, ref } from '@vue/composition-api';
+import { watch, ref, Ref } from '@vue/composition-api';
+import useRequiredField from '@/composition/requiredInput';
 
 export default Vue.extend({
   props: {
@@ -27,8 +28,6 @@ export default Vue.extend({
   },
   setup(props: any, context: any) {
     const $store = context.root.$store;
-    const newTodoName = ref(props.todo.name);
-    const inputError = ref(false);
 
     function enterEditMode(): void {
       if (!props.todo.done) {
@@ -42,16 +41,12 @@ export default Vue.extend({
       }
     }
 
-    function setName(): void {
-      if (newTodoName.value.length) {
-        $store.dispatch('todos/setName', {
-          todo: props.todo,
-          name: newTodoName.value,
-        });
-        $store.dispatch('todos/quitEditMode');
-      } else {
-        inputError.value = true;
-      }
+    function setName(input: Ref<string>): void {
+      $store.dispatch('todos/setName', {
+        todo: props.todo,
+        name: input.value,
+      });
+      $store.dispatch('todos/quitEditMode');
     }
 
     watch(
@@ -64,16 +59,7 @@ export default Vue.extend({
       },
     );
 
-    watch(
-      () => newTodoName,
-      () => {
-        if (newTodoName.value.length) {
-          inputError.value = false;
-        }
-      },
-    );
-
-    return { newTodoName, inputError, enterEditMode, setName };
+    return { enterEditMode, ...useRequiredField(setName) };
   },
 });
 </script>

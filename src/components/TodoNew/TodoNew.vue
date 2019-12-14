@@ -1,9 +1,9 @@
 <template>
   <div>
-    <form @submit.prevent="addTodo()" class="todoNew">
+    <form @submit.prevent="submit()" class="todoNew">
       <input
         placeholder="Do something..."
-        v-model="newTodoName"
+        v-model="input"
         class="todoNew__input"
       />
       <button class="todoNew__addButton">Add</button>
@@ -14,33 +14,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { watch, ref } from '@vue/composition-api';
+import { watch, ref, Ref } from '@vue/composition-api';
+import useRequiredInput from '@/composition/requiredInput';
 
 export default Vue.extend({
   setup(props, { root: { $store } }) {
-    const newTodoName = ref('');
-    const inputError = ref(false);
+    function addTodo(input: Ref<string>): void {
+      $store.dispatch('todos/add', { name: input.value });
 
-    function addTodo(): void {
-      if (newTodoName.value.length) {
-        $store.dispatch('todos/add', { name: newTodoName.value });
-
-        newTodoName.value = '';
-      } else {
-        inputError.value = true;
-      }
+      input.value = '';
     }
 
-    watch(
-      () => newTodoName,
-      () => {
-        if (newTodoName.value.length) {
-          inputError.value = false;
-        }
-      },
-    );
-
-    return { newTodoName, inputError, addTodo };
+    return { ...useRequiredInput(addTodo) };
   },
 });
 </script>
