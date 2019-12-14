@@ -33,10 +33,12 @@ export default Vue.extend({
     ...mapState('todos', ['todos']),
     ...mapGetters('todos', ['done']),
   },
-  methods: {
-    removeDoneTodos(): void {
-      this.$store.dispatch('todos/removeDone');
-    },
+  setup(props, { root: { $store } }) {
+    function removeDoneTodos(): void {
+      $store.dispatch('todos/removeDone');
+    }
+
+    return { removeDoneTodos };
   },
 });
 </script>
