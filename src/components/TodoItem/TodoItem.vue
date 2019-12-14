@@ -19,51 +19,61 @@
 <script lang="ts">
 import Vue from 'vue';
 import Todo from '@/models/todo';
+import { watch, ref } from '@vue/composition-api';
 
 export default Vue.extend({
   props: {
     todo: Object as () => Todo,
   },
-  data(): { newTodoName: string; inputError: boolean } {
-    return {
-      newTodoName: this.todo.name,
-      inputError: false,
-    };
-  },
-  watch: {
-    'todo.done'(newValue) {
-      this.$store.dispatch('todos/setDone', {
-        todo: this.todo,
-        done: newValue,
-      });
-    },
-    'newTodoName'(newTodoName) {
-      if (newTodoName.length) {
-        this.inputError = false;
-      }
-    },
-  },
-  methods: {
-    enterEditMode(): void {
-      if (!this.todo.done) {
-        this.$store.dispatch('todos/enterEditMode', { todo: this.todo });
+  setup(props: any, context: any) {
+    const $store = context.root.$store;
+    const newTodoName = ref(props.todo.name);
+    const inputError = ref(false);
+
+    function enterEditMode(): void {
+      if (!props.todo.done) {
+        $store.dispatch('todos/enterEditMode', {
+          todo: props.todo,
+        });
 
         Vue.nextTick().then(() =>
-          (this.$refs.newNameInput as HTMLInputElement).focus(),
+          (context.refs.newNameInput as HTMLInputElement).focus(),
         );
       }
-    },
-    setName(): void {
-      if (this.newTodoName.length) {
-        this.$store.dispatch('todos/setName', {
-          todo: this.todo,
-          name: this.newTodoName,
+    }
+
+    function setName(): void {
+      if (newTodoName.value.length) {
+        $store.dispatch('todos/setName', {
+          todo: props.todo,
+          name: newTodoName.value,
         });
-        this.$store.dispatch('todos/quitEditMode');
+        $store.dispatch('todos/quitEditMode');
       } else {
-        this.inputError = true;
+        inputError.value = true;
       }
-    },
+    }
+
+    watch(
+      () => props.todo.done,
+      () => {
+        $store.dispatch('todos/setDone', {
+          todo: props.todo,
+          done: props.todo.done,
+        });
+      },
+    );
+
+    watch(
+      () => newTodoName,
+      () => {
+        if (newTodoName.value.length) {
+          inputError.value = false;
+        }
+      },
+    );
+
+    return { newTodoName, inputError, enterEditMode, setName };
   },
 });
 </script>
